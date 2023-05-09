@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "633424058579",
+    "project_id": "etors-a7c64",
+    "storage_bucket": "etors-a7c64.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633424058579:android:4faeb921156b5054179c26",
+        "android_client_info": {
+          "package_name": "com.ecommerce.etors"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "633424058579-pe73eqqh86adt54pblnf1p3e13kfnh1t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxHax1Ty3ulkBkjuiWxmt8NEQ00OQu1rU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "633424058579-pe73eqqh86adt54pblnf1p3e13kfnh1t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
