@@ -28,7 +28,7 @@ class AuthService {
       'firstName': '',
       'lastName': '',
       'Email': userCredential.user!.email,
-      'Type': "Buyer",
+      'Type': "Acheteur",
       'pic': userCredential.user!.photoURL,
     });
   }

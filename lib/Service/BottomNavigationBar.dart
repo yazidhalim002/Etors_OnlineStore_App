@@ -10,9 +10,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BottomNavigationBarScreen extends StatefulWidget {
-  const BottomNavigationBarScreen({super.key, required this.gendre});
+  const BottomNavigationBarScreen({super.key, required this.type});
 
-  final Type gendre;
+  final String type;
 
   @override
   State<BottomNavigationBarScreen> createState() =>
@@ -22,31 +22,31 @@ class BottomNavigationBarScreen extends StatefulWidget {
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   var currentIndex = 0;
 
-  final List<Widget> _buyerScreens = [
-    ExploreScreen(),
-    CartScreen(),
-    ProfileScreen(),
-  ];
-
-  final List<Widget> _sellerScreens = [
-    DashboardScreen(),
-    ProductScreen(),
-    ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget>? _screens;
+    if (widget.type == "Acheteur") {
+      _screens = [
+        ExploreScreen(),
+        CartScreen(),
+        ProfileScreen(),
+      ];
+    } else if (widget.type == "Vendeur") {
+      _screens = [
+        DashboardScreen(),
+        ProductScreen(),
+        ProfileScreen(),
+      ];
+    }
     return Scaffold(
-      body: widget.gendre == Type.Vendeur
-          ? _buyerScreens[currentIndex]
-          : _sellerScreens[currentIndex],
-      bottomNavigationBar: widget.gendre == Type.Vendeur
-          ? bottomNavigationBarBayer()
-          : bottomNavigationBarSeller(),
+      body: _screens![currentIndex],
+      bottomNavigationBar: widget.type == "Acheteur"
+          ? _buildBottomNavigationBarAcheteur()
+          : _buildBottomNavigationBarVendeur(),
     );
   }
 
-  Widget bottomNavigationBarBayer() {
+  Widget _buildBottomNavigationBarAcheteur() {
     int Index = 0;
     return BottomNavigationBar(
       items: [
@@ -102,7 +102,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     );
   }
 
-  Widget bottomNavigationBarSeller() {
+  Widget _buildBottomNavigationBarVendeur() {
     int Index = 0;
     return BottomNavigationBar(
       items: [
