@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:etors/Service/BottomNavigationBar.dart';
 import 'package:etors/Service/auth.dart';
 import 'package:etors/Widget/CheckScreen.dart';
+import 'package:etors/Widget/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -233,53 +234,6 @@ class CircularButton extends StatelessWidget {
           image,
           height: 60,
           width: 60,
-        ),
-      ),
-    );
-  }
-}
-
-class InputText extends StatelessWidget {
-  const InputText({
-    super.key,
-    required this.Controller,
-    required this.Text,
-    required this.isPass,
-  });
-
-  final TextEditingController Controller;
-  final String Text;
-  final bool isPass;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 30, left: 30),
-      child: TextFormField(
-        obscureText: isPass,
-        controller: Controller,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'Please enter your $Text';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          fillColor: Colors.grey.shade100,
-          filled: true,
-          hintText: Text,
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          enabledBorder: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: Color.fromARGB(255, 100, 136, 238))),
-          focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(10))),
         ),
       ),
     );

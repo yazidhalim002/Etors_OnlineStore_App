@@ -212,7 +212,7 @@ class InputText extends StatelessWidget {
     super.key,
     required this.Controller,
     required this.Text,
-    required this.isPass,
+    this.isPass = false,
   });
 
   final TextEditingController Controller;

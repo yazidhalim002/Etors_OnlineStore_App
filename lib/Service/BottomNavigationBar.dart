@@ -3,6 +3,7 @@ import 'package:etors/Screens/Buyer/Explore.dart';
 import 'package:etors/Screens/Profile.dart';
 import 'package:etors/Screens/Seller/Dashboard.dart';
 import 'package:etors/Screens/Seller/AddProduct.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -21,6 +22,7 @@ class BottomNavigationBarScreen extends StatefulWidget {
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   var currentIndex = 0;
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     } else if (widget.type == "Vendeur") {
       _screens = [
         DashboardScreen(),
-        ProductScreen(),
+        ProductScreen(
+          uid: user.uid,
+        ),
         ProfileScreen(),
       ];
     }
