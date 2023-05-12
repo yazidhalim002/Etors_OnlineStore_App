@@ -1,6 +1,6 @@
 import 'package:etors/Screens/Buyer/Cart.dart';
 import 'package:etors/Screens/Buyer/Explore.dart';
-import 'package:etors/Screens/Profile.dart';
+import 'package:etors/Screens/Profile/Profile.dart';
 import 'package:etors/Screens/Seller/Dashboard.dart';
 import 'package:etors/Screens/Seller/AddProduct.dart';
 import 'package:firebase_auth/firebase_auth.dart';

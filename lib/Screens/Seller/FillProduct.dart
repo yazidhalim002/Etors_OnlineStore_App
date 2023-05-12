@@ -5,7 +5,6 @@ import 'package:etors/Widget/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -31,26 +30,37 @@ class _FillProductState extends State<FillProduct> {
   var _image;
   //this link is display a white background
   //when the user choose product image the system will display whitebackground until do the process of upload the image in the firebase storage and get the link
-  String _displayimage = "https://www.ledr.com/colours/white.htm";
+  String _displayimage = "";
 
   void Done() async {
     if (_formKey.currentState!.validate()) {
       try {
         await FirebaseFirestore.instance.collection('Products').doc().set({
-          'name': _nameController.text,
-          'price': _priceController.text,
-          'description': _descriptionController.text,
-          'size': _sizeController.text,
-          'sold': _soldController.text,
-          'color': _colorController.text,
-          'uid': userCredential.uid,
-          'image': _displayimage,
+          'name': _nameController.text.trim(),
+          'price': _priceController.text.trim(),
+          'description': _descriptionController.text.trim(),
+          'size': _sizeController.text.trim(),
+          'sold': _soldController.text.trim(),
+          'color': _colorController.text.trim(),
+          'uid': userCredential.uid.trim(),
+          'image': _displayimage.trim(),
+          'category': _selectedCategory
         });
       } on FirebaseAuthException catch (e) {
         print(e);
       }
     }
   }
+
+  String _selectedCategory = 'Men';
+
+  final List<String> _categories = <String>[
+    'Men',
+    'Women',
+    'Watch',
+    'Device',
+    'Gamming'
+  ];
 
   Future uploadImage() async {
     final picker = ImagePicker();
@@ -60,18 +70,22 @@ class _FillProductState extends State<FillProduct> {
       _image = File(pickedFile!.path);
     });
 
-    final reference = FirebaseStorage.instance
-        .ref()
-        .child('images/${basename(_image!.path)}');
-    final uploadTask = reference.putFile(_image!);
+    try {
+      final reference = FirebaseStorage.instance
+          .ref()
+          .child('images/${basename(_image!.path)}');
+      final uploadTask = reference.putFile(_image!);
 
-    final snapshot = await uploadTask.whenComplete(() => null);
+      final snapshot = await uploadTask.whenComplete(() => null);
 
-    final downloadUrl = await snapshot.ref.getDownloadURL();
+      final downloadUrl = await snapshot.ref.getDownloadURL();
 
-    setState(() {
-      _displayimage = downloadUrl;
-    });
+      setState(() {
+        _displayimage = downloadUrl;
+      });
+    } catch (error) {
+      print("Error uploading image: $error");
+    }
   }
 
   @override
@@ -86,21 +100,17 @@ class _FillProductState extends State<FillProduct> {
                 Column(
                   children: [
                     Container(
-                      height: 150,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 2.0,
+                        height: 150,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 2.0,
+                          ),
                         ),
-                      ),
-                      child: _image != null
-                          ? Image.network(_displayimage)
-                          : Image.asset(
-                              'assets/white.jpg',
-                              fit: BoxFit.cover,
-                            ),
-                    ),
+                        child: _displayimage != ""
+                            ? Image.network(_displayimage)
+                            : const SizedBox()),
                     const SizedBox(
                       height: 10,
                     ),
@@ -117,51 +127,77 @@ class _FillProductState extends State<FillProduct> {
                           )),
                         )),
                     const SizedBox(
-                      height: 10,
+                      height: 7,
                     ),
                     InputText(
                       Controller: _nameController,
                       Text: "Product Name",
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 7,
                     ),
                     InputText(
                       Controller: _priceController,
                       Text: "Price",
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 7,
                     ),
                     InputText(
                       Controller: _descriptionController,
                       Text: "description",
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 7,
                     ),
                     InputText(
                       Controller: _sizeController,
                       Text: "Size",
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 7,
                     ),
                     InputText(
                       Controller: _colorController,
                       Text: "Color",
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 7,
                     ),
                     InputText(
                       Controller: _soldController,
                       Text: "Sold",
                     ),
+                    const SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      width: 350,
+                      height: 58,
+                      child: DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          labelText: 'Category',
+                          border: OutlineInputBorder(),
+                        ),
+                        value: _selectedCategory,
+                        items: _categories
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectedCategory = value!;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 7,
+                    ),
                   ],
-                ),
-                const SizedBox(
-                  height: 30,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class users {
-  late String Email, Username, Firstname, Lastname, Type;
+  late String Email, Username, Firstname, Lastname, Type, uid, image;
 
   users(this.Email, this.Username, this.Firstname, this.Lastname, this.Type);
 
@@ -23,7 +23,9 @@ class users {
       'Username': Username,
       'Firstname': Firstname,
       'Lastname': Lastname,
-      'Type': Type
+      'Type': Type,
+      'uid': uid,
+      'image': image,
     };
   }
 

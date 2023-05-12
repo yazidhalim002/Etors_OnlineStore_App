@@ -100,48 +100,51 @@ class ListProduct extends StatelessWidget {
           itemCount: products.length,
           itemBuilder: (context, Index) {
             final product = products[Index].data() as Map<String, dynamic>;
-            return InkWell(
-              onTap: () {},
-              child: Container(
-                width: MediaQuery.of(context).size.width * .4,
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.grey.shade200),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 220,
-                            width: MediaQuery.of(context).size.width * .4,
-                            child: Image.network(
-                              product['image'],
-                              fit: BoxFit.cover,
+            return Padding(
+              padding: EdgeInsets.all(8),
+              child: InkWell(
+                onTap: () {},
+                child: Container(
+                  width: MediaQuery.of(context).size.width * .4,
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color: Colors.grey.shade200),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 220,
+                              width: MediaQuery.of(context).size.width * .4,
+                              child: Image.network(
+                                product['image'],
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    CustomText(
-                      text: product['name'],
-                      alignment: Alignment.bottomLeft,
-                    ),
-                    SizedBox(height: 10),
-                    CustomText(
-                      text: product['description'],
-                      alignment: Alignment.bottomLeft,
-                      color: Colors.grey,
-                      maxLine: 1,
-                    ),
-                    SizedBox(height: 10),
-                    CustomText(
-                      text: '${product['price']} \$',
-                      alignment: Alignment.bottomLeft,
-                      color: Color.fromARGB(255, 100, 136, 238),
-                    )
-                  ],
+                      SizedBox(height: 10),
+                      CustomText(
+                        text: product['name'],
+                        alignment: Alignment.bottomLeft,
+                      ),
+                      SizedBox(height: 10),
+                      CustomText(
+                        text: product['description'],
+                        alignment: Alignment.bottomLeft,
+                        color: Colors.grey,
+                        maxLine: 1,
+                      ),
+                      SizedBox(height: 10),
+                      CustomText(
+                        text: '${product['price']} \$',
+                        alignment: Alignment.bottomLeft,
+                        color: Color.fromARGB(255, 100, 136, 238),
+                      )
+                    ],
+                  ),
                 ),
               ),
             );
