@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:etors/Screens/Profile/BillingDetails/BillingDetails.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:etors/Service/auth.dart';
 import 'package:etors/Widget/CheckScreen.dart';
@@ -214,7 +215,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileMenuWidget(
                         title: 'Billing Details',
                         icon: LineAwesomeIcons.wallet,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BillingDetails(),
+                              ));
+                        },
                         endIcon: false),
                     ProfileMenuWidget(
                         title: 'User Management',

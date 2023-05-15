@@ -1,10 +1,6 @@
-import 'package:etors/Screens/Seller/Dashboard.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
-import '../Widget/Login.dart';
+import 'package:etors/Widget/SignUp.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override

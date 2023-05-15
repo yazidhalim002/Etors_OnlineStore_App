@@ -8,9 +8,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -175,9 +177,10 @@ class _LoginState extends State<Login> {
                   height: 20,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(
-                      width: 100,
+                      width: 40,
                     ),
                     CircularButton(
                       backcolor: Colors.white70,
@@ -197,6 +200,37 @@ class _LoginState extends State<Login> {
                       backcolor: Colors.black,
                       image: 'assets/FACEBOOK.png',
                       fct: () {},
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        AuthService().OTP();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                          backgroundColor: Color.fromARGB(255, 226, 226, 226)),
+                      child: Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(boxShadow: [
+                            BoxShadow(
+                                color: Color.fromARGB(132, 63, 63, 63),
+                                spreadRadius: 0,
+                                blurRadius: 120)
+                          ]),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              'assets/cell-phone.png',
+                              height: 30,
+                              width: 30,
+                            ),
+                          )),
+                    ),
+                    SizedBox(
+                      width: 40,
                     ),
                   ],
                 ),

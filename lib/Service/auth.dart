@@ -51,5 +51,7 @@ class AuthService {
     FirebaseAuth.instance.signOut();
   }
 
+  void OTP() {}
+
   void FacebookSignInMethode() {}
 }

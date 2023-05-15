@@ -52,6 +52,9 @@ dependencies:
   file_picker: ^5.3.0
   path: ^1.8.2
   line_awesome_flutter: ^2.0.0
+  strings: ^1.0.0
+  flip_card: ^0.7.0
+  patterns_canvas: ^0.4.0
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +82,7 @@ flutter:
     - assets/1.png
     - assets/2.png
     - assets/3.png
+    - assets/cell-phone.png
     - assets/air4.jpg
     - assets/white.jpg
     - assets/icons/arrow-right-solid.svg
@@ -96,6 +100,13 @@ flutter:
     - assets/BottomNavigationBar/user.png
     - assets/BottomNavigationBar/graph.png
     - assets/BottomNavigationBar/shipping.png
+    - assets/Logos/chip.png
+    - assets/Logos/visa.png
+    - assets/Logos/mastercard.png
+    - assets/Logos/discover.png
+    - assets/Logos/checked.png
+    - assets/Logos/contact_less.png
+    - assets/Logos/AmericanExpress.png
 
   #   - images/a_dot_ham.jpeg
 

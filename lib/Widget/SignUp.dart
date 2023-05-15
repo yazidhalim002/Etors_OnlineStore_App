@@ -42,6 +42,8 @@ class _SignUpState extends State<SignUp> {
           'lastName': _LnameController.text,
           'Email': _emailController.text,
           'Type': _isSeller,
+          'uid': userCredential.user!.uid,
+          'image': ''
         });
       } on FirebaseAuthException catch (e) {
         // Handle the error
