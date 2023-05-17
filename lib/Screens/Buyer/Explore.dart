@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:etors/Classes/Product.dart';
-import 'package:etors/Widget/Login.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:etors/Screens/Buyer/Categories.dart';
+import 'package:etors/Service/Details_product.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 
 import '../../Service/CustomText.dart';
 
-Stream<QuerySnapshot> getProductsStream() {
-  return FirebaseFirestore.instance.collection('Products').snapshots();
-}
+List<Product> allProducts = [];
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -37,7 +35,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   final Color color = Color.fromARGB(255, 100, 136, 238);
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +46,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               return CircularProgressIndicator();
             } else {
               final products = snapshot.data!.docs;
+              allProducts = Product.fromQuerySnapshot(products);
               return Stack(
                 children: [
                   Container(
@@ -83,14 +81,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 fontSize: 16,
                                 textDecoration: TextDecoration.underline,
                               ),
-                            )
+                            ),
                           ],
                         ),
                         SizedBox(
                           height: 20,
                         ),
-                        ListBestSellingProduct(
-                          products: products,
+                        ListBestSellingProduct(),
+                        SizedBox(
+                          height: 500,
                         )
                       ],
                     ),
@@ -106,38 +105,43 @@ class _ExploreScreenState extends State<ExploreScreen> {
 class ListBestSellingProduct extends StatelessWidget {
   const ListBestSellingProduct({
     super.key,
-    required this.products,
   });
-
-  final List<QueryDocumentSnapshot> products;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 310,
-      child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: products.length,
+      height: 600,
+      child: GridView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: allProducts.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 20.0,
+            crossAxisSpacing: 20.0,
+            childAspectRatio: 0.6,
+          ),
           itemBuilder: (context, Index) {
-            final product = products[Index].data() as Map<String, dynamic>;
+            final product = allProducts[Index];
             return InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailsScreen(id: product.id)));
+              },
               child: Container(
                 width: MediaQuery.of(context).size.width * .4,
                 child: Column(
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.grey.shade200),
                       child: Column(
                         children: [
                           Container(
                             height: 220,
                             width: MediaQuery.of(context).size.width * .4,
                             child: Image.network(
-                              product['image'],
-                              fit: BoxFit.cover,
+                              product.image,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ],
@@ -145,19 +149,19 @@ class ListBestSellingProduct extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     CustomText(
-                      text: product['name'],
+                      text: product.name,
                       alignment: Alignment.bottomLeft,
                     ),
                     SizedBox(height: 10),
                     CustomText(
-                      text: product['description'],
+                      text: product.description,
                       alignment: Alignment.bottomLeft,
                       color: Colors.grey,
                       maxLine: 1,
                     ),
                     SizedBox(height: 10),
                     CustomText(
-                      text: '${product['price']} \$',
+                      text: '${product.price} \$',
                       alignment: Alignment.bottomLeft,
                       color: Color.fromARGB(255, 100, 136, 238),
                     )
@@ -165,10 +169,7 @@ class ListBestSellingProduct extends StatelessWidget {
                 ),
               ),
             );
-          },
-          separatorBuilder: (context, index) => const SizedBox(
-                width: 25,
-              )),
+          }),
     );
   }
 }
@@ -193,16 +194,26 @@ class _ListCategories extends StatelessWidget {
           itemBuilder: (context, Index) {
             return Column(
               children: [
-                Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Colors.grey.shade200),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      image[Index],
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CategoryScreen(
+                                  categoryname: names[Index],
+                                )));
+                  },
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.grey.shade200),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        image[Index],
+                      ),
                     ),
                   ),
                 ),
@@ -239,53 +250,6 @@ class SearchBar extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class ProductsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: getProductsStream(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('Loading...');
-        }
-
-        List<Product> products = [];
-
-        snapshot.data!.docs.forEach((DocumentSnapshot document) {
-          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-          String name = data['name'];
-          String description = data['description'];
-          String image = data['image'];
-          String price = data['price'];
-          String color = data['color'];
-          String size = data['size'];
-          int sold = data['sold'];
-          String uid = data['uid'];
-
-          Product product = Product(
-            name: name,
-            description: description,
-            image: image,
-            price: price,
-            color: color,
-            size: size,
-            sold: sold,
-            uid: uid,
-          );
-
-          products.add(product);
-        });
-        return Container();
-      },
     );
   }
 }

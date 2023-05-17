@@ -31,20 +31,38 @@ class _SignUpState extends State<SignUp> {
           email: _emailController.text,
           password: _passwordController.text,
         );
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CheckScreen()));
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'Username': _UsernameController.text,
-          'firstName': _FnameController.text,
-          'lastName': _LnameController.text,
-          'Email': _emailController.text,
-          'Type': _isSeller,
-          'uid': userCredential.user!.uid,
-          'image': ''
-        });
+        if (_isSeller == "Livreur") {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set({
+            'Username': _UsernameController.text,
+            'firstName': _FnameController.text,
+            'lastName': _LnameController.text,
+            'Email': _emailController.text,
+            'Type': _isSeller,
+            'uid': userCredential.user!.uid,
+            'image': '',
+            'available': true,
+          });
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => CheckScreen()));
+        } else {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set({
+            'Username': _UsernameController.text,
+            'firstName': _FnameController.text,
+            'lastName': _LnameController.text,
+            'Email': _emailController.text,
+            'Type': _isSeller,
+            'uid': userCredential.user!.uid,
+            'image': ''
+          });
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => CheckScreen()));
+        }
       } on FirebaseAuthException catch (e) {
         // Handle the error
         print(e);
@@ -220,7 +238,6 @@ class InputText extends StatelessWidget {
   final TextEditingController Controller;
   final String Text;
   final bool isPass;
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -239,6 +256,10 @@ class InputText extends StatelessWidget {
           fillColor: Colors.grey.shade100,
           filled: true,
           hintText: Text,
+          hintStyle: TextStyle(
+            color: Colors.grey,
+            fontSize: 16,
+          ),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           border: OutlineInputBorder(

@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:etors/Classes/Users.dart';
 import 'package:etors/Screens/Profile/BillingDetails/BillingDetails.dart';
+import 'package:etors/Screens/Profile/EditProfile.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:etors/Service/auth.dart';
 import 'package:etors/Widget/CheckScreen.dart';
@@ -40,39 +42,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _fetchUserData();
   }
 
-  Future _uploadImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    setState(() {
-      _image = File(pickedFile!.path);
-    });
-
-    try {
-      final reference = FirebaseStorage.instance
-          .ref()
-          .child('profile/${basename(_image!.path)}');
-      final uploadTask = reference.putFile(_image!);
-
-      final snapshot = await uploadTask.whenComplete(() => null);
-
-      final downloadUrl = await snapshot.ref.getDownloadURL();
-
-      setState(() {
-        _displayimage = downloadUrl;
-
-        final userDocRef = FirebaseFirestore.instance
-            .collection("users")
-            .doc(user.uid)
-            .update({'image': _displayimage});
-      });
-
-      print(_displayimage);
-    } catch (error) {
-      print("Error uploading image: $error");
-    }
-  }
-
   void _fetchUserData() async {
     final userDoc =
         FirebaseFirestore.instance.collection('users').doc(user.uid);
@@ -94,8 +63,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _firstname = userData.data()!['firstName'];
       _lastname = userData.data()!['lastName'];
       _email = userData.data()!['Email'];
-
-      print(_firstname);
     });
   }
 
@@ -106,6 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
         title: CustomText(
           text: "Profile",
           fontSize: 20,
@@ -148,28 +116,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                               ),
                             ),
-                            Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: GestureDetector(
-                                onTap: () {
-                                  _uploadImage();
-                                },
-                                child: Container(
-                                  height: 35,
-                                  width: 35,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                      color:
-                                          Color.fromARGB(255, 100, 136, 238)),
-                                  child: const Icon(
-                                    LineAwesomeIcons.alternate_pencil,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                            )
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -190,7 +136,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 45,
                       width: 200,
                       child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EditProfileScreen()));
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   Color.fromARGB(255, 100, 136, 238),
@@ -239,7 +190,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: LineAwesomeIcons.alternate_sign_out,
                         onPressed: () {
                           AuthService().signout();
-                          Get.to(CheckScreen());
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CheckScreen()));
                         },
                         endIcon: true),
                   ],

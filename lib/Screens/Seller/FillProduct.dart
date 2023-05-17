@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:etors/Screens/Seller/AddProduct.dart';
 import 'package:etors/Widget/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+
+int id = 1;
 
 class FillProduct extends StatefulWidget {
   const FillProduct({super.key});
@@ -36,6 +39,7 @@ class _FillProductState extends State<FillProduct> {
     if (_formKey.currentState!.validate()) {
       try {
         await FirebaseFirestore.instance.collection('Products').doc().set({
+          'id': id,
           'name': _nameController.text.trim(),
           'price': _priceController.text.trim(),
           'description': _descriptionController.text.trim(),
@@ -46,6 +50,7 @@ class _FillProductState extends State<FillProduct> {
           'image': _displayimage.trim(),
           'category': _selectedCategory
         });
+        id++;
       } on FirebaseAuthException catch (e) {
         print(e);
       }
@@ -216,6 +221,11 @@ class _FillProductState extends State<FillProduct> {
                         color: Color.fromARGB(255, 150, 100, 130),
                         fct: () {
                           Done();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProductScreen(uid: userCredential.uid)));
                         }),
                     SizedBox(
                       width: 10,

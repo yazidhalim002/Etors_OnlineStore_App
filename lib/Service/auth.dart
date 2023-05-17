@@ -52,6 +52,4 @@ class AuthService {
   }
 
   void OTP() {}
-
-  void FacebookSignInMethode() {}
 }

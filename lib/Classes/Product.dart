@@ -1,45 +1,49 @@
-import 'dart:ffi';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class Product {
-  late String name, description, image, price, color, size, uid;
-  late int sold;
+  int id;
+  String price;
+  String size;
+  String color;
+  String category;
+  String description;
+  String image;
+  String name;
+  int sold;
+  String uid;
 
   Product({
-    required this.name,
-    required this.description,
-    required this.image,
+    required this.id,
     required this.price,
     required this.size,
     required this.color,
+    required this.category,
+    required this.description,
+    required this.image,
+    required this.name,
     required this.sold,
     required this.uid,
   });
 
-  Product.fromJson(Map<dynamic, dynamic> map) {
-    if (map == null) {
-      return;
-    }
-    name = map['name'];
-    description = map['description'];
-    image = map['image'];
-    price = map['price'];
-    color = map['color'];
-    size = map['size'];
-    sold = map['sold'];
-    uid = map['uid'];
-    ;
+  factory Product.fromFirestore(DocumentSnapshot doc) {
+    Map<dynamic, dynamic> data = doc.data() as Map<dynamic, dynamic>;
+    return Product(
+      id: data['id'],
+      price: data['price'],
+      size: data['size'],
+      color: data['color'],
+      category: data['category'],
+      description: data['description'],
+      image: data['image'],
+      name: data['name'],
+      sold: data['sold'],
+      uid: data['uid'],
+    );
   }
 
-  toJson() {
-    return {
-      'name': name,
-      'description': description,
-      'image': image,
-      'price': price,
-      'color': color,
-      'size': size,
-      'sold': sold,
-      'uid': uid,
-    };
+  static List<Product> fromQuerySnapshot(
+      List<QueryDocumentSnapshot> documents) {
+    return documents.map((doc) => Product.fromFirestore(doc)).toList();
   }
 }

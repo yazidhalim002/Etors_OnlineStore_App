@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class BillingDetails extends StatefulWidget {
   const BillingDetails({super.key});
@@ -17,8 +18,17 @@ class _BillingDetailsState extends State<BillingDetails> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Theme.of(context).cardColor,
-        iconTheme: Theme.of(context).iconTheme,
+        leading: IconButton(
+          icon: Icon(
+            LineAwesomeIcons.angle_left,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: SafeArea(
         child: Column(

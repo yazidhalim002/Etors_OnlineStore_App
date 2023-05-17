@@ -87,6 +87,7 @@ flutter:
     - assets/white.jpg
     - assets/icons/arrow-right-solid.svg
     - assets/icons/User.png
+    - assets/icons/cart.png
     - assets/logobg.png
     - assets/GOOGLE.png
     - assets/FACEBOOK.png

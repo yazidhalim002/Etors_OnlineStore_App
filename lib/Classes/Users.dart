@@ -15,6 +15,8 @@ class users {
     Firstname = map['Firstname'];
     Lastname = map['Lastname'];
     Type = map['Type'];
+    uid = map['uid'];
+    Type = map['image'];
   }
 
   toJson() {
