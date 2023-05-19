@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:etors/Screens/Buyer/OrderConfirmation.dart';
 import 'package:etors/Service/CustomText.dart';
+import 'package:etors/Service/Details_product.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Classes/Cart.dart';
 import '../../Classes/Product.dart';
+
+Cart? cart;
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -15,17 +20,14 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  Map<String, int> productCounters = {};
-  double Total_Amount = 0, initialPrice = 0;
-  int counter = 1;
-  Cart? cart;
   User user = FirebaseAuth.instance.currentUser!;
+
+  late SharedPreferences prefs;
 
   Future<void> addToCart(Product product) async {
     try {
       final cartCollection = FirebaseFirestore.instance.collection('Cart');
-      final cartDocument = cartCollection
-          .doc(user.uid); // Replace 'your_user_id' with the actual user ID
+      final cartDocument = cartCollection.doc(user.uid);
 
       final cartSnapshot = await cartDocument.get();
 
@@ -80,7 +82,16 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
+    initializeSharedPreferences();
+    initializeSharedPreferences();
     loadCartFromFirestore(user.uid); // Replace user.uid with the actual user ID
+  }
+
+  Future<void> initializeSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      Total_Amount = prefs.getDouble('totalAmount') ?? 0;
+    });
   }
 
   Future<void> loadCartFromFirestore(String userId) async {
@@ -92,13 +103,6 @@ class _CartScreenState extends State<CartScreen> {
 
       if (cartSnapshot.exists) {
         cart = Cart.fromFirestore(cartSnapshot);
-
-        if (cart != null) {
-          for (var productId in cart!.products.keys) {
-            final productQuantity = cart!.products[productId] ?? 0;
-            productCounters[productId] = productQuantity;
-          }
-        }
       } else {
         // Cart does not exist, create a new cart
         cart = Cart(products: {});
@@ -128,110 +132,163 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: SafeArea(
         child: cart != null && cart!.products.isNotEmpty
-            ? ListView.separated(
-                itemCount: cart!.products.length,
-                itemBuilder: (context, index) {
-                  final productId = cart!.products.keys.toList()[index];
-                  var productQuantity = cart!.products[productId];
+            ? Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      child: ListView.separated(
+                        itemCount: cart!.products.length,
+                        itemBuilder: (context, index) {
+                          final productId = cart!.products.keys.toList()[index];
+                          var productQuantity = cart!.products[productId];
 
-                  // Fetch the product details from Firestore
-                  return StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('Products')
-                        .where('id', isEqualTo: int.parse(productId))
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      }
+                          // Fetch the product details from Firestore
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('Products')
+                                .where('id', isEqualTo: int.parse(productId))
+                                .snapshots(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Text('Product not found');
-                      }
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return const Text('Product not found');
+                              }
 
-                      final productData =
-                          snapshot.data!.docs[0].data() as Map<String, dynamic>;
+                              final productData = snapshot.data!.docs[0].data()
+                                  as Map<String, dynamic>;
 
-                      final product =
-                          Product.fromFirestore(snapshot.data!.docs[0]);
+                              final product =
+                                  Product.fromFirestore(snapshot.data!.docs[0]);
 
-                      return Container(
-                        height: 140,
-                        child: Row(children: [
-                          Container(
-                            width: 140,
-                            child: Image.network(product.image),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 30),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                  fontSize: 20,
-                                  text: product.name,
-                                ),
-                                const SizedBox(
-                                  height: 6,
-                                ),
-                                CustomText(
-                                  color: Color.fromRGBO(0, 197, 105, 1),
-                                  text: "\$ " + product.price,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Container(
-                                  color: Colors.grey.shade200,
-                                  child: Row(children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          addToCart(product);
-                                          setState(() {
-                                            initialPrice =
-                                                double.parse(product.price) *
-                                                    productQuantity!;
-                                          });
-                                        },
-                                        icon: const Icon(Icons.add)),
-                                    const SizedBox(
-                                      width: 20,
+                              return Container(
+                                height: 140,
+                                child: Row(children: [
+                                  Container(
+                                    width: 140,
+                                    child: Image.network(
+                                      product.image,
+                                      fit: BoxFit.contain,
                                     ),
-                                    CustomText(
-                                      text: "${productQuantity}",
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 30),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CustomText(
+                                          fontSize: 20,
+                                          text: product.name,
+                                        ),
+                                        const SizedBox(
+                                          height: 6,
+                                        ),
+                                        CustomText(
+                                          color: Color.fromRGBO(0, 197, 105, 1),
+                                          text: "\$ " + product.price,
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Container(
+                                          color: Colors.grey.shade200,
+                                          child: Row(children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    addToCart(product);
+                                                    Total_Amount =
+                                                        Total_Amount +
+                                                            double.parse(
+                                                                product.price);
+                                                  });
+                                                },
+                                                icon: const Icon(Icons.add)),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            CustomText(
+                                              text: "${productQuantity}",
+                                            ),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    if (productQuantity! > 1) {
+                                                      Total_Amount =
+                                                          Total_Amount -
+                                                              double.parse(
+                                                                  product
+                                                                      .price);
+                                                    }
+                                                  });
+                                                },
+                                                icon: const Icon(
+                                                    LineAwesomeIcons.minus)),
+                                          ]),
+                                        )
+                                      ],
                                     ),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                    IconButton(
-                                        onPressed: () {
-                                          if (productQuantity! > 1) {
-                                            removeFromCart(product);
-                                            setState(() {
-                                              initialPrice =
-                                                  double.parse(product.price) *
-                                                      productQuantity;
-                                            });
-                                          }
-                                        },
-                                        icon:
-                                            const Icon(LineAwesomeIcons.minus)),
-                                  ]),
-                                )
-                              ],
+                                  )
+                                ]),
+                              );
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return SizedBox(
+                            height: 30,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            CustomText(
+                              text: "TOTAL",
                             ),
-                          )
-                        ]),
-                      );
-                    },
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return SizedBox(
-                    height: 30,
-                  );
-                },
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomText(
+                              text: "\$ $Total_Amount",
+                              color: const Color.fromRGBO(0, 197, 105, 1),
+                              fontSize: 20,
+                            )
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          width: 180,
+                          height: 90,
+                          child: CustomButton(
+                            onPress: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          OrderConfirmation()));
+                            },
+                            text: "Checkout",
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
               )
             : const Center(
                 child: Text('Your cart is empty.'),
@@ -255,6 +312,7 @@ class _CartScreenState extends State<CartScreen> {
   void clearCart() {
     if (cart != null) {
       cart!.products.clear();
+      Total_Amount = 0;
       saveCartToFirestore(user.uid);
       setState(() {}); // Trigger a rebuild to reflect the changes
     }

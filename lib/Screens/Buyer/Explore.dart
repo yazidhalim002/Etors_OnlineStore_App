@@ -163,7 +163,7 @@ class ListBestSellingProduct extends StatelessWidget {
                     CustomText(
                       text: '${product.price} \$',
                       alignment: Alignment.bottomLeft,
-                      color: Color.fromARGB(255, 100, 136, 238),
+                      color: const Color.fromRGBO(0, 197, 105, 1),
                     )
                   ],
                 ),

@@ -1,10 +1,13 @@
-import 'dart:ui';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:etors/Classes/Product.dart';
 import 'package:etors/Models/Colors.dart';
 import 'package:etors/Service/CustomText.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:etors/Screens/Buyer/Categories.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+double Total_Amount = 0;
 
 class DetailsScreen extends StatefulWidget {
   final int id;
@@ -15,6 +18,44 @@ class DetailsScreen extends StatefulWidget {
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
+  User user = FirebaseAuth.instance.currentUser!;
+
+  Future<void> addToCart(Product product) async {
+    try {
+      final cartCollection = FirebaseFirestore.instance.collection('Cart');
+      final cartDocument = cartCollection
+          .doc(user.uid); // Replace 'your_user_id' with the actual user ID
+
+      final cartSnapshot = await cartDocument.get();
+
+      if (cartSnapshot.exists) {
+        // Cart exists, update the product quantity
+        cartDocument.update({
+          'products.${product.id}': FieldValue.increment(1),
+        });
+      } else {
+        // Cart does not exist, create a new cart
+        cartDocument.set({
+          'products': {
+            product.id.toString(): 1,
+          },
+        });
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Product added to cart.'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error adding product to cart.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -246,9 +287,21 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             width: 180,
                             height: 50,
                             child: CustomButton(
-                              onPress: () {},
-                              text: "Add to Cart",
-                            ))
+                                text: "Add to Cart",
+                                onPress: () {
+                                  if (snapshot.hasData &&
+                                      snapshot.data!.docs.isNotEmpty) {
+                                    final productData =
+                                        snapshot.data!.docs.first.data()
+                                            as Map<String, dynamic>;
+                                    final product = Product.fromFirestore(
+                                        snapshot.data!.docs.first);
+                                    addToCart(product);
+                                    Total_Amount = Total_Amount +
+                                        double.parse(product.price);
+                                    print(Total_Amount);
+                                  }
+                                }))
                       ],
                     ),
                   )
@@ -267,20 +320,18 @@ class CustomButton extends StatelessWidget {
 
   final Color color;
 
-  final Function onPress;
+  final Function() onPress;
 
   CustomButton({
     required this.onPress,
-    this.text = 'Write text ',
+    this.text = '',
     this.color = const Color.fromRGBO(0, 197, 105, 1),
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        onPress;
-      },
+      onPressed: onPress,
       style: ElevatedButton.styleFrom(
           shape: new RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(10.0),
