@@ -1,52 +1,62 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-class users {
-  late String Email, Username, Firstname, Lastname, Type, uid, image;
+class Users {
+  final String id;
+  final String userType;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String username;
+  final String uid;
+  final List<String> address;
+  final String image;
+  final double balance;
+  final bool available;
 
-  users(this.Email, this.Username, this.Firstname, this.Lastname, this.Type);
+  Users({
+    required this.id,
+    required this.userType,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.username,
+    required this.uid,
+    required this.address,
+    required this.image,
+    required this.balance,
+    required this.available,
+  });
 
-  users.fromJson(Map<dynamic, dynamic> map) {
-    if (map == null) {
-      return;
-    }
-    Email = map['Email'];
-    Username = map['Username'];
-    Firstname = map['Firstname'];
-    Lastname = map['Lastname'];
-    Type = map['Type'];
-    uid = map['uid'];
-    Type = map['image'];
+  factory Users.fromDocumentSnapshot(DocumentSnapshot snapshot) {
+    final data = snapshot.data() as Map<String, dynamic>;
+    return Users(
+      id: snapshot.id,
+      userType: data['Type'],
+      firstName: data['firstName'],
+      lastName: data['lastName'],
+      email: data['Email'],
+      username: data['Username'],
+      uid: data['uid'],
+      address: List<String>.from(data['Address'] ?? []),
+      image: data['image'],
+      balance: data['balance']?.toDouble() ?? 0.0,
+      available: data['available'] ?? false,
+    );
   }
 
-  toJson() {
-    return {
-      'Email': Email,
-      'Username': Username,
-      'Firstname': Firstname,
-      'Lastname': Lastname,
-      'Type': Type,
-      'uid': uid,
-      'image': image,
-    };
-  }
-
-  final CollectionReference _usercollectionReference =
-      FirebaseFirestore.instance.collection('users');
-  final user = FirebaseAuth.instance.currentUser!.email;
-  Future<String?> getType() async {
+  static Future<Users?> getUserFromFirestore(String userId) async {
     try {
-      QuerySnapshot querySnapshot =
-          await _usercollectionReference.where('Email', isEqualTo: user).get();
-      if (querySnapshot.size > 0) {
-        for (var doc in querySnapshot.docs) {
-          return doc['Type'];
-        }
+      final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (snapshot.exists) {
+        return Users.fromDocumentSnapshot(snapshot);
       }
-      return null;
     } catch (e) {
-      print(e);
-      return null;
+      print('Error fetching user data: $e');
     }
+    return null;
   }
 }

@@ -1,18 +1,15 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:etors/Classes/Users.dart';
 import 'package:etors/Screens/Profile/BillingDetails/BillingDetails.dart';
+import 'package:etors/Screens/Profile/DeliveryAdresse/DeliveryAdress.dart';
+import 'package:etors/Screens/Profile/DeliveryAdresse/UrAddress.dart';
 import 'package:etors/Screens/Profile/EditProfile.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:etors/Service/auth.dart';
 import 'package:etors/Widget/CheckScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:path/path.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -177,7 +174,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileMenuWidget(
                         title: 'Delivery Adresse',
                         icon: LineAwesomeIcons.user_check,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UrAddress(),
+                              ));
+                        },
                         endIcon: false),
                     const Divider(),
                     ProfileMenuWidget(

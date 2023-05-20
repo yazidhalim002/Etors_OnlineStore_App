@@ -2,10 +2,15 @@ import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/services.dart';
-
+import 'package:credit_card_number_validator/credit_card_number_validator.dart';
 import '../../../Models/CreditCard.dart';
 import '../../../Models/MyPainter.dart';
 import '../../../Models/card_alert_dialog.dart';
+
+final TextEditingController cardNumberController = TextEditingController();
+final TextEditingController cardHolderNameController = TextEditingController();
+final TextEditingController cardExpiryDateController = TextEditingController();
+final TextEditingController cardCvvController = TextEditingController();
 
 class AddCard extends StatefulWidget {
   const AddCard({Key? key}) : super(key: key);
@@ -15,13 +20,6 @@ class AddCard extends StatefulWidget {
 }
 
 class _AddCardState extends State<AddCard> {
-  final TextEditingController cardNumberController = TextEditingController();
-  final TextEditingController cardHolderNameController =
-      TextEditingController();
-  final TextEditingController cardExpiryDateController =
-      TextEditingController();
-  final TextEditingController cardCvvController = TextEditingController();
-
   final FlipCardController flipCardController = FlipCardController();
   String cardType = "";
   String cardImage = "";
@@ -339,7 +337,7 @@ class _AddCardState extends State<AddCard> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.deepPurpleAccent,
+                  backgroundColor: Color.fromARGB(255, 100, 136, 238),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),

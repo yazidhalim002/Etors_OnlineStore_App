@@ -22,12 +22,11 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   User user = FirebaseAuth.instance.currentUser!;
 
-  late SharedPreferences prefs;
-
   Future<void> addToCart(Product product) async {
     try {
       final cartCollection = FirebaseFirestore.instance.collection('Cart');
-      final cartDocument = cartCollection.doc(user.uid);
+      final cartDocument = cartCollection
+          .doc(user.uid); // Replace 'your_user_id' with the actual user ID
 
       final cartSnapshot = await cartDocument.get();
 
@@ -35,6 +34,7 @@ class _CartScreenState extends State<CartScreen> {
         // Cart exists, update the product quantity
         cartDocument.update({
           'products.${product.id}': FieldValue.increment(1),
+          'Total_Amount': Total_Amount.toString(),
         });
       } else {
         // Cart does not exist, create a new cart
@@ -42,9 +42,11 @@ class _CartScreenState extends State<CartScreen> {
           'products': {
             product.id.toString(): 1,
           },
+          'Total_Amount': Total_Amount.toString(),
         });
       }
       loadCartFromFirestore(user.uid);
+      setState(() {});
     } catch (e) {
       print(e);
     }
@@ -62,6 +64,7 @@ class _CartScreenState extends State<CartScreen> {
         // Cart exists, update the product quantity
         cartDocument.update({
           'products.${product.id}': FieldValue.increment(-1),
+          'Total_Amount': Total_Amount.toString(),
         });
       } else {
         // Cart does not exist, create a new cart
@@ -69,6 +72,7 @@ class _CartScreenState extends State<CartScreen> {
           'products': {
             product.id.toString(): 1,
           },
+          'Total_Amount': Total_Amount.toString(),
         });
       }
 
@@ -82,16 +86,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
-    initializeSharedPreferences();
-    initializeSharedPreferences();
     loadCartFromFirestore(user.uid); // Replace user.uid with the actual user ID
-  }
-
-  Future<void> initializeSharedPreferences() async {
-    prefs = await SharedPreferences.getInstance();
-    setState(() {
-      Total_Amount = prefs.getDouble('totalAmount') ?? 0;
-    });
   }
 
   Future<void> loadCartFromFirestore(String userId) async {
@@ -222,6 +217,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 onPressed: () {
                                                   setState(() {
                                                     if (productQuantity! > 1) {
+                                                      removeFromCart(product);
                                                       Total_Amount =
                                                           Total_Amount -
                                                               double.parse(

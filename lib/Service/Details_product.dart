@@ -32,6 +32,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         // Cart exists, update the product quantity
         cartDocument.update({
           'products.${product.id}': FieldValue.increment(1),
+          'Total_Amount': Total_Amount.toString(),
         });
       } else {
         // Cart does not exist, create a new cart
@@ -39,6 +40,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
           'products': {
             product.id.toString(): 1,
           },
+          'Total_Amount': Total_Amount.toString(),
         });
       }
 
@@ -299,6 +301,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     addToCart(product);
                                     Total_Amount = Total_Amount +
                                         double.parse(product.price);
+
                                     print(Total_Amount);
                                   }
                                 }))
