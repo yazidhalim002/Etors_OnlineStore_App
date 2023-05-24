@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  Users? me =
-      await Users.getUserFromFirestore(FirebaseAuth.instance.currentUser!.uid);
 
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,

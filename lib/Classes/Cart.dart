@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class Cart {
   final Map<String, int> products;
+  final String totalAmount;
 
-  Cart({required this.products});
+  Cart({required this.products, required this.totalAmount});
 
   factory Cart.fromFirestore(DocumentSnapshot doc) {
     Map<dynamic, dynamic> data = doc.data() as Map<dynamic, dynamic>;
@@ -16,13 +17,16 @@ class Cart {
       });
     }
 
-    return Cart(products: products);
+    String totalAmount = data['totalAmount'] ?? '0';
+
+    return Cart(products: products, totalAmount: totalAmount);
   }
 
   Map<String, dynamic> toFirestore() {
     Map<String, dynamic> data = {};
 
     data['products'] = products;
+    data['totalAmount'] = totalAmount;
 
     return data;
   }

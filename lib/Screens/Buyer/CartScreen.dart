@@ -11,6 +11,7 @@ import '../../Classes/Cart.dart';
 import '../../Classes/Product.dart';
 
 Cart? cart;
+String totalAmount = cart!.totalAmount;
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class _CartScreenState extends State<CartScreen> {
         // Cart exists, update the product quantity
         cartDocument.update({
           'products.${product.id}': FieldValue.increment(1),
-          'Total_Amount': Total_Amount.toString(),
+          'totalAmount': Total_Amount.toString(),
         });
       } else {
         // Cart does not exist, create a new cart
@@ -42,7 +43,7 @@ class _CartScreenState extends State<CartScreen> {
           'products': {
             product.id.toString(): 1,
           },
-          'Total_Amount': Total_Amount.toString(),
+          'totalAmount': Total_Amount.toString(),
         });
       }
       loadCartFromFirestore(user.uid);
@@ -64,7 +65,7 @@ class _CartScreenState extends State<CartScreen> {
         // Cart exists, update the product quantity
         cartDocument.update({
           'products.${product.id}': FieldValue.increment(-1),
-          'Total_Amount': Total_Amount.toString(),
+          'totalAmount': Total_Amount.toString(),
         });
       } else {
         // Cart does not exist, create a new cart
@@ -72,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
           'products': {
             product.id.toString(): 1,
           },
-          'Total_Amount': Total_Amount.toString(),
+          'totalAmount': Total_Amount.toString(),
         });
       }
 
@@ -98,9 +99,9 @@ class _CartScreenState extends State<CartScreen> {
 
       if (cartSnapshot.exists) {
         cart = Cart.fromFirestore(cartSnapshot);
+        totalAmount = cart!.totalAmount;
       } else {
-        // Cart does not exist, create a new cart
-        cart = Cart(products: {});
+        cart = Cart(products: {}, totalAmount: '');
       }
 
       setState(() {}); // Trigger a rebuild to show the loaded cart
@@ -218,11 +219,11 @@ class _CartScreenState extends State<CartScreen> {
                                                   setState(() {
                                                     if (productQuantity! > 1) {
                                                       removeFromCart(product);
-                                                      Total_Amount =
-                                                          Total_Amount -
-                                                              double.parse(
-                                                                  product
-                                                                      .price);
+                                                      totalAmount = (double
+                                                              .parse(
+                                                                  totalAmount) -
+                                                          double.parse(product
+                                                              .price)) as String;
                                                     }
                                                   });
                                                 },
@@ -260,7 +261,7 @@ class _CartScreenState extends State<CartScreen> {
                               height: 10,
                             ),
                             CustomText(
-                              text: "\$ $Total_Amount",
+                              text: "\$ $totalAmount",
                               color: const Color.fromRGBO(0, 197, 105, 1),
                               fontSize: 20,
                             )

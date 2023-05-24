@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:etors/Classes/Product.dart';
 import 'package:etors/Models/Colors.dart';
+import 'package:etors/Screens/Buyer/CartScreen.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -299,8 +300,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     final product = Product.fromFirestore(
                                         snapshot.data!.docs.first);
                                     addToCart(product);
-                                    Total_Amount = Total_Amount +
-                                        double.parse(product.price);
+                                    totalAmount = (double.parse(totalAmount) +
+                                        double.parse(product.price)) as String;
 
                                     print(Total_Amount);
                                   }

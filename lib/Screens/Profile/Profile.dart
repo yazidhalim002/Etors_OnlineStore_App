@@ -4,6 +4,7 @@ import 'package:etors/Screens/Profile/BillingDetails/BillingDetails.dart';
 import 'package:etors/Screens/Profile/DeliveryAdresse/DeliveryAdress.dart';
 import 'package:etors/Screens/Profile/DeliveryAdresse/UrAddress.dart';
 import 'package:etors/Screens/Profile/EditProfile.dart';
+import 'package:etors/Screens/Profile/FAQ.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:etors/Service/auth.dart';
 import 'package:etors/Widget/CheckScreen.dart';
@@ -31,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _firstname = '';
   String _lastname = '';
   String _email = '';
+  String _userType = '';
 
   @override
   void initState() {
@@ -60,6 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _firstname = userData.data()!['firstName'];
       _lastname = userData.data()!['lastName'];
       _email = userData.data()!['Email'];
+      _userType = userData.data()!['Type'];
     });
   }
 
@@ -161,8 +164,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () {},
                         endIcon: false),
                     ProfileMenuWidget(
-                        title: 'Billing Details',
-                        icon: LineAwesomeIcons.wallet,
+                        isEnabled: _userType == "Vendeur"
+                            ? false
+                            : _userType == "Acheteur"
+                                ? true
+                                : false,
+                        title: 'Delivery Adresse',
+                        icon: LineAwesomeIcons.user_check,
+                        onPressed: () {
+                          print(_userType);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UrAddress(),
+                              ));
+                        },
+                        endIcon: false),
+                    ProfileMenuWidget(
+                        title: 'Contact Us',
+                        icon: LineAwesomeIcons.headphones,
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -172,21 +192,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         endIcon: false),
                     ProfileMenuWidget(
-                        title: 'Delivery Adresse',
-                        icon: LineAwesomeIcons.user_check,
+                        title: 'FAQ',
+                        icon: LineAwesomeIcons.info,
                         onPressed: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => UrAddress(),
-                              ));
+                                  builder: (context) => FAQScreen()));
                         },
-                        endIcon: false),
-                    const Divider(),
-                    ProfileMenuWidget(
-                        title: 'Information',
-                        icon: LineAwesomeIcons.info,
-                        onPressed: () {},
                         endIcon: false),
                     ProfileMenuWidget(
                         title: 'Log Out',
@@ -215,6 +228,7 @@ class ProfileMenuWidget extends StatelessWidget {
     required this.onPressed,
     required this.endIcon,
     this.textColor,
+    this.isEnabled = true,
   });
 
   final String title;
@@ -222,10 +236,12 @@ class ProfileMenuWidget extends StatelessWidget {
   final VoidCallback onPressed;
   final bool endIcon;
   final Color? textColor;
+  final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      enabled: isEnabled,
       onTap: onPressed,
       leading: Container(
         width: 40,

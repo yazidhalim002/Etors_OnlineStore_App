@@ -47,7 +47,7 @@ class _SignUpState extends State<SignUp> {
           });
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => CheckScreen()));
-        } else {
+        } else if (_isSeller == "Acheteur") {
           await FirebaseFirestore.instance
               .collection('users')
               .doc(userCredential.user!.uid)
@@ -59,6 +59,23 @@ class _SignUpState extends State<SignUp> {
             'Type': _isSeller,
             'uid': userCredential.user!.uid,
             'image': ''
+          });
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => CheckScreen()));
+        } else {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set({
+            'Username': _UsernameController.text,
+            'firstName': _FnameController.text,
+            'lastName': _LnameController.text,
+            'Email': _emailController.text,
+            'Type': _isSeller,
+            'uid': userCredential.user!.uid,
+            'image': '',
+            'balance': 0,
+            'OnHold': 0,
           });
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => CheckScreen()));

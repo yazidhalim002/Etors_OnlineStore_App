@@ -56,7 +56,6 @@ dependencies:
   flip_card: ^0.7.0
   patterns_canvas: ^0.4.0
   shared_preferences: ^2.0.7
-  credit_card_number_validator: ^1.0.4
 dev_dependencies:
   flutter_test:
     sdk: flutter
