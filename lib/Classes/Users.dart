@@ -8,7 +8,7 @@ class Users {
   final String email;
   final String username;
   final String uid;
-  final List<String> address;
+  final Map<String, dynamic> address;
   final String image;
   final double balance;
   final bool available;
@@ -37,7 +37,7 @@ class Users {
       email: data['Email'],
       username: data['Username'],
       uid: data['uid'],
-      address: List<String>.from(data['Address'] ?? []),
+      address: Map<String, dynamic>.from(data['Address'] ?? []),
       image: data['image'],
       balance: data['balance']?.toDouble() ?? 0.0,
       available: data['available'] ?? false,

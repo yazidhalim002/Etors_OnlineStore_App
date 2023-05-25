@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class Cart {
   final Map<String, int> products;
-  final String totalAmount;
+  late final String totalAmount;
 
   Cart({required this.products, required this.totalAmount});
 
@@ -17,7 +17,7 @@ class Cart {
       });
     }
 
-    String totalAmount = data['totalAmount'] ?? '0';
+    String totalAmount = data['totalAmount'] ?? '0.0';
 
     return Cart(products: products, totalAmount: totalAmount);
   }

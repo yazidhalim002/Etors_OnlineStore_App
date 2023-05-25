@@ -24,6 +24,7 @@ class _OrderConfirmationState extends State<OrderConfirmation> {
   bool isChoosen = false;
   String Total_Amount = '0';
   String? paymentMethod;
+  List<String> prodId = [];
 
   @override
   void initState() {
@@ -183,6 +184,8 @@ class _OrderConfirmationState extends State<OrderConfirmation> {
                 child: ListView.separated(
                   itemBuilder: (BuildContext context, int index) {
                     final productId = cart!.products.keys.toList()[index];
+                    prodId.add(productId);
+
                     var productQuantity = cart!.products[productId];
                     return StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance

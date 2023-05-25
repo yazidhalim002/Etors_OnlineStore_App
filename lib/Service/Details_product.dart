@@ -2,7 +2,6 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:etors/Classes/Product.dart';
 import 'package:etors/Models/Colors.dart';
-import 'package:etors/Screens/Buyer/CartScreen.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +32,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         // Cart exists, update the product quantity
         cartDocument.update({
           'products.${product.id}': FieldValue.increment(1),
-          'Total_Amount': Total_Amount.toString(),
+          'totalAmount': Total_Amount.toString(),
         });
       } else {
         // Cart does not exist, create a new cart
@@ -41,7 +40,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
           'products': {
             product.id.toString(): 1,
           },
-          'Total_Amount': Total_Amount.toString(),
+          'totalAmount': Total_Amount.toString(),
         });
       }
 
@@ -300,8 +299,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     final product = Product.fromFirestore(
                                         snapshot.data!.docs.first);
                                     addToCart(product);
-                                    totalAmount = (double.parse(totalAmount) +
-                                        double.parse(product.price)) as String;
+                                    Total_Amount = Total_Amount +
+                                        double.parse(product.price);
 
                                     print(Total_Amount);
                                   }

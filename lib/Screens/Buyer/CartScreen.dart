@@ -56,8 +56,7 @@ class _CartScreenState extends State<CartScreen> {
   Future<void> removeFromCart(Product product) async {
     try {
       final cartCollection = FirebaseFirestore.instance.collection('Cart');
-      final cartDocument = cartCollection
-          .doc(user.uid); // Replace 'your_user_id' with the actual user ID
+      final cartDocument = cartCollection.doc(user.uid);
 
       final cartSnapshot = await cartDocument.get();
 
@@ -219,11 +218,11 @@ class _CartScreenState extends State<CartScreen> {
                                                   setState(() {
                                                     if (productQuantity! > 1) {
                                                       removeFromCart(product);
-                                                      totalAmount = (double
-                                                              .parse(
-                                                                  totalAmount) -
-                                                          double.parse(product
-                                                              .price)) as String;
+                                                      Total_Amount =
+                                                          Total_Amount -
+                                                              double.parse(
+                                                                  product
+                                                                      .price);
                                                     }
                                                   });
                                                 },
@@ -309,9 +308,12 @@ class _CartScreenState extends State<CartScreen> {
   void clearCart() {
     if (cart != null) {
       cart!.products.clear();
-      Total_Amount = 0;
+
+      setState(() {
+        Total_Amount = 0.0;
+      }); // Trigger a rebuild to reflect the changes
+      loadCartFromFirestore(user.uid);
       saveCartToFirestore(user.uid);
-      setState(() {}); // Trigger a rebuild to reflect the changes
     }
   }
 }
