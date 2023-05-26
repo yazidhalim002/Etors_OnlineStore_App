@@ -8,10 +8,12 @@ import 'package:etors/Service/CustomText.dart';
 import 'package:etors/Service/Details_product.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 Cart? cart;
+List<String> prodId = [];
 
 class OrderConfirmation extends StatefulWidget {
   const OrderConfirmation({super.key});
@@ -24,7 +26,6 @@ class _OrderConfirmationState extends State<OrderConfirmation> {
   bool isChoosen = false;
   String Total_Amount = '0';
   String? paymentMethod;
-  List<String> prodId = [];
 
   @override
   void initState() {
@@ -184,7 +185,6 @@ class _OrderConfirmationState extends State<OrderConfirmation> {
                 child: ListView.separated(
                   itemBuilder: (BuildContext context, int index) {
                     final productId = cart!.products.keys.toList()[index];
-                    prodId.add(productId);
 
                     var productQuantity = cart!.products[productId];
                     return StreamBuilder<QuerySnapshot>(
@@ -208,6 +208,10 @@ class _OrderConfirmationState extends State<OrderConfirmation> {
 
                           final product =
                               Product.fromFirestore(snapshot.data!.docs[0]);
+                          if (prodId.contains(productId)) {
+                          } else {
+                            prodId.add(productId);
+                          }
 
                           return Column(
                             children: [
@@ -315,10 +319,13 @@ class _OrderConfirmationState extends State<OrderConfirmation> {
                       height: 90,
                       child: CustomButton(
                         onPress: () {
+                          print(prodId);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CheckoutScreen()));
+                                  builder: (context) => CheckoutScreen(
+                                        prodIds: prodId,
+                                      )));
                         },
                         text: "Checkout",
                       ),

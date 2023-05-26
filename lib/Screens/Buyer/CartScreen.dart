@@ -308,12 +308,8 @@ class _CartScreenState extends State<CartScreen> {
   void clearCart() {
     if (cart != null) {
       cart!.products.clear();
-
-      setState(() {
-        Total_Amount = 0.0;
-      }); // Trigger a rebuild to reflect the changes
-      loadCartFromFirestore(user.uid);
       saveCartToFirestore(user.uid);
+      setState(() {}); // Trigger a rebuild to reflect the changes
     }
   }
 }

@@ -39,7 +39,7 @@ class CardAlertDialog extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'Card Added Successfully',
+                'Order Added Successfully',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class CardAlertDialog extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'You can now use your card to make payments',
+                'You will recieve your order as soon as possible',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),

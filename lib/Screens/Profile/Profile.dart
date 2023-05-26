@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:etors/Screens/Buyer/OrderConfirmation.dart';
 import 'package:etors/Screens/Profile/BillingDetails/BillingDetails.dart';
 import 'package:etors/Screens/Profile/DeliveryAdresse/DeliveryAdress.dart';
 import 'package:etors/Screens/Profile/DeliveryAdresse/UrAddress.dart';
 import 'package:etors/Screens/Profile/EditProfile.dart';
 import 'package:etors/Screens/Profile/FAQ.dart';
+import 'package:etors/Screens/Profile/Order/BuyerOrder.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:etors/Service/auth.dart';
 import 'package:etors/Widget/CheckScreen.dart';
@@ -159,9 +161,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 10,
                     ),
                     ProfileMenuWidget(
-                        title: 'Settings',
-                        icon: LineAwesomeIcons.cog,
-                        onPressed: () {},
+                        title: 'Orders',
+                        icon: LineAwesomeIcons.box,
+                        onPressed: () {
+                          if (_userType == "Acheteur") {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        OrderedProductsScreen()));
+                          } else if (_userType == "Vendeur") {}
+                        },
                         endIcon: false),
                     ProfileMenuWidget(
                         isEnabled: _userType == "Vendeur"
