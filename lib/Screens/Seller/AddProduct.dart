@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:etors/Screens/Buyer/Explore.dart';
 import 'package:etors/Screens/Seller/FillProduct.dart';
 import 'package:etors/Service/CustomText.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ProductScreen extends StatefulWidget {
   final String uid;
@@ -36,6 +32,7 @@ class _ProductScreenState extends State<ProductScreen> {
               return CircularProgressIndicator();
             } else {
               final products = snapshot.data!.docs;
+
               return Stack(children: [
                 SafeArea(
                   child: Column(

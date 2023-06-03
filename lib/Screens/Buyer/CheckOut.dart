@@ -57,6 +57,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         "Address": userAddress,
         "buyerID": FirebaseAuth.instance.currentUser!.uid,
         "products": widget.prodIds,
+        "Delivered": false,
       });
     }
   }

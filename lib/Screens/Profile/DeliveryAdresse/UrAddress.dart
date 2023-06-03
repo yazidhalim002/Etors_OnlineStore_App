@@ -15,6 +15,31 @@ class UrAddress extends StatefulWidget {
 
 class _UrAddressState extends State<UrAddress> {
   final User? user = FirebaseAuth.instance.currentUser;
+  bool isExist = false;
+
+  void function() {
+    final commandesRef = FirebaseFirestore.instance.collection('users');
+    final userCommandeDocRef = commandesRef.doc(user!.uid);
+
+    userCommandeDocRef.get().then((docSnapshot) {
+      if (docSnapshot.exists) {
+        setState(() {
+          isExist = true;
+        });
+      } else {
+        setState(() {
+          isExist = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    function();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,121 +66,148 @@ class _UrAddressState extends State<UrAddress> {
           ),
         ),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(user!.uid)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
+      body: isExist == true
+          ? StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user!.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
 
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-          final addressData =
-              snapshot.data!.get('Address') as Map<String, dynamic>?;
+                final addressData =
+                    snapshot.data!.get('Address') as Map<String, dynamic>?;
 
-          if (addressData == null) {
-            return const Center(
-              child: Text('No address available.'),
-            );
-          }
+                if (addressData == null) {
+                  return const Center(
+                    child: Text('No address available.'),
+                  );
+                }
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView(
+                return Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Container(
-                        height: 110,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  bottom: 70, right: 20, left: 10),
-                              child: Icon(
-                                Icons.location_on,
-                                color: Colors.black,
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Container(
+                              height: 110,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: 70, right: 20, left: 10),
+                                    child: Icon(
+                                      Icons.location_on,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text: addressData['ContactName'] + "\n",
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text: addressData['PhoneNumber'] + "\n",
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text: addressData['Street'] + "\n",
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text: addressData['City'] +
+                                            "," +
+                                            addressData['Province'] +
+                                            "," +
+                                            addressData['ZipCode'],
+                                      )
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                CustomText(
-                                  text: addressData['ContactName'] + "\n",
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                CustomText(
-                                  text: addressData['PhoneNumber'] + "\n",
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                CustomText(
-                                  text: addressData['Street'] + "\n",
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                CustomText(
-                                  text: addressData['City'] +
-                                      "," +
-                                      addressData['Province'] +
-                                      "," +
-                                      addressData['ZipCode'],
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
+                          )
+                        ],
                       ),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                            height: 50,
+                            width: MediaQuery.of(context).size.width,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            DeliveryAdresse()));
+                              },
+                              child: addressData.length >= 1
+                                  ? Text("Edit Address")
+                                  : Text("Add Address"),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 100, 136, 238)),
+                            ))
+                      ],
                     )
                   ],
+                );
+              },
+            )
+          : Column(
+              children: [
+                Expanded(child: Container()),
+                Row(
+                  children: [
+                    Container(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DeliveryAdresse()));
+                          },
+                          child: Text("Add Address"),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color.fromARGB(255, 100, 136, 238)),
+                        ))
+                  ],
                 ),
-              ),
-              Row(
-                children: [
-                  Container(
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DeliveryAdresse()));
-                        },
-                        child: addressData.length >= 1
-                            ? Text("Edit Address")
-                            : Text("Add Address"),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Color.fromARGB(255, 100, 136, 238)),
-                      ))
-                ],
-              )
-            ],
-          );
-        },
-      ),
+              ],
+            ),
     );
   }
 }

@@ -30,7 +30,11 @@ class CheckScreen extends StatelessWidget {
                   if (snapshot.hasData) {
                     String? gendre = snapshot.data;
                     return BottomNavigationBarScreen(
-                        type: gendre == "Acheteur" ? "Acheteur" : "Vendeur");
+                        type: gendre == "Acheteur"
+                            ? "Acheteru"
+                            : gendre == "Vendeur"
+                                ? "Vendeur"
+                                : "Livreur");
                   } else {
                     return Center(child: CircularProgressIndicator());
                   }

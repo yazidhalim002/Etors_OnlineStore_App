@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class Cart {
   final Map<String, int> products;
-  final String totalAmount;
+  String totalAmount = '0';
 
   Cart({required this.products, required this.totalAmount});
 
@@ -33,7 +33,7 @@ class Cart {
 
   Future<void> saveToFirestore(String userId) async {
     try {
-      final cartCollection = FirebaseFirestore.instance.collection('carts');
+      final cartCollection = FirebaseFirestore.instance.collection('Cart');
       final cartDocument = cartCollection.doc(userId);
 
       await cartDocument.set(toFirestore());

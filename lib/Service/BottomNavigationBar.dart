@@ -1,5 +1,6 @@
 import 'package:etors/Screens/Buyer/CartScreen.dart';
 import 'package:etors/Screens/Buyer/Explore.dart';
+import 'package:etors/Screens/Livreur/Livreur.dart';
 import 'package:etors/Screens/Profile/Profile.dart';
 import 'package:etors/Screens/Seller/Dashboard.dart';
 import 'package:etors/Screens/Seller/AddProduct.dart';
@@ -39,12 +40,16 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
         ),
         ProfileScreen(),
       ];
+    } else {
+      _screens = [Livreur(), ProfileScreen()];
     }
     return Scaffold(
       body: _screens![currentIndex],
       bottomNavigationBar: widget.type == "Acheteur"
           ? _buildBottomNavigationBarAcheteur()
-          : _buildBottomNavigationBarVendeur(),
+          : widget.type == "Vendeur"
+              ? _buildBottomNavigationBarVendeur()
+              : _buildBottomNavigationBarLivreur(),
     );
   }
 
@@ -127,6 +132,50 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
           activeIcon: Padding(
             padding: EdgeInsets.only(top: 15),
             child: Text("Products", style: GoogleFonts.workSans(fontSize: 16)),
+          ),
+          label: "",
+          icon: Image.asset(
+            'assets/BottomNavigationBar/shipping.png',
+            fit: BoxFit.contain,
+            width: 30,
+          ),
+        ),
+        BottomNavigationBarItem(
+          activeIcon: Padding(
+            padding: EdgeInsets.only(top: 15),
+            child: Text("Profile", style: GoogleFonts.workSans(fontSize: 16)),
+          ),
+          label: "",
+          icon: Image.asset(
+            'assets/BottomNavigationBar/user.png',
+            fit: BoxFit.contain,
+            width: 30,
+          ),
+        )
+      ],
+      onTap: (index) {
+        setState(() {
+          currentIndex = index;
+        });
+      },
+      elevation: 0,
+      backgroundColor: Colors.grey.shade50,
+      selectedItemColor: Colors.black,
+      currentIndex: currentIndex,
+    );
+  }
+
+  Widget _buildBottomNavigationBarLivreur() {
+    int Index = 0;
+    return BottomNavigationBar(
+      items: [
+        BottomNavigationBarItem(
+          activeIcon: Padding(
+            padding: EdgeInsets.only(top: 15),
+            child: Text(
+              "Dashboard",
+              style: GoogleFonts.workSans(fontSize: 16),
+            ),
           ),
           label: "",
           icon: Image.asset(

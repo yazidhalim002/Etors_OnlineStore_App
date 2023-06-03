@@ -58,7 +58,15 @@ class _SignUpState extends State<SignUp> {
             'Email': _emailController.text,
             'Type': _isSeller,
             'uid': userCredential.user!.uid,
-            'image': ''
+            'image': '',
+            'address': {
+              'city': '',
+              'street': '',
+              'province': '',
+              'zipcode': '',
+              'contactName': '',
+              'phoneNumber': '',
+            }
           });
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => CheckScreen()));

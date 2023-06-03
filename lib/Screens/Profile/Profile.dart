@@ -7,6 +7,8 @@ import 'package:etors/Screens/Profile/DeliveryAdresse/UrAddress.dart';
 import 'package:etors/Screens/Profile/EditProfile.dart';
 import 'package:etors/Screens/Profile/FAQ.dart';
 import 'package:etors/Screens/Profile/Order/BuyerOrder.dart';
+import 'package:etors/Screens/Profile/Order/SellerOrder.dart';
+import 'package:etors/Screens/Seller/Dashboard.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:etors/Service/auth.dart';
 import 'package:etors/Widget/CheckScreen.dart';
@@ -170,7 +172,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         OrderedProductsScreen()));
-                          } else if (_userType == "Vendeur") {}
+                          } else if (_userType == "Vendeur") {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SellerOrderScreen(
+                                        sellerId: FirebaseAuth
+                                            .instance.currentUser!.uid)));
+                          }
                         },
                         endIcon: false),
                     ProfileMenuWidget(

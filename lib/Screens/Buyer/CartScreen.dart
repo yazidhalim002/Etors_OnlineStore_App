@@ -298,18 +298,23 @@ class _CartScreenState extends State<CartScreen> {
       final cartCollection = FirebaseFirestore.instance.collection('Cart');
       final cartDocument = cartCollection.doc(userId);
 
-      await cartDocument.set(cart!.toFirestore());
+      await cartDocument
+          .set(cart!.toFirestore()); // Use the updated cart object
     } catch (e) {
       // Handle error
       print('Error saving cart to Firestore: $e');
     }
   }
 
-  void clearCart() {
+  void clearCart() async {
     if (cart != null) {
       cart!.products.clear();
-      saveCartToFirestore(user.uid);
-      setState(() {}); // Trigger a rebuild to reflect the changes
+      cart!.totalAmount = '0'; // Update the totalAmount field
+      await saveCartToFirestore(user.uid);
+      setState(() {
+        totalAmount = '0';
+        Total_Amount = 0;
+      });
     }
   }
 }

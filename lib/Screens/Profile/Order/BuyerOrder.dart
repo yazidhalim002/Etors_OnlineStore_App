@@ -1,15 +1,20 @@
-import 'package:etors/Service/CustomText.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class OrderedProductsScreen extends StatelessWidget {
+class OrderedProductsScreen extends StatefulWidget {
   OrderedProductsScreen({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
+  @override
+  State<OrderedProductsScreen> createState() => _OrderedProductsScreenState();
+}
+
+class _OrderedProductsScreenState extends State<OrderedProductsScreen> {
   String userUID = FirebaseAuth.instance.currentUser!.uid;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +38,14 @@ class OrderedProductsScreen extends StatelessWidget {
             );
           }
 
-          final products = snapshot.data!.data()?['products'] as List<dynamic>;
+          final data = snapshot.data?.data();
+          final products = data?['products'] as List<dynamic>?;
+
+          if (products == null || products.isEmpty) {
+            return Center(
+              child: Text('No ordered products found.'),
+            );
+          }
 
           return ListView.builder(
             itemCount: products.length,
@@ -100,18 +112,22 @@ class OrderedProductsScreen extends StatelessWidget {
                                   SizedBox(
                                     height: 15,
                                   ),
-                                  CustomText(
-                                    text: productData['name'],
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 17,
+                                  Text(
+                                    productData['name'],
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 17,
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 15,
                                   ),
-                                  CustomText(
-                                    text: productData['color'],
-                                    maxLine: 1,
-                                    color: Colors.grey.shade600,
+                                  Text(
+                                    productData['color'],
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -124,24 +140,28 @@ class OrderedProductsScreen extends StatelessWidget {
                                       Container(
                                         alignment: Alignment.bottomRight,
                                         child: ElevatedButton(
-                                            onPressed: () {},
-                                            style: ElevatedButton.styleFrom(
-                                                shape: const StadiumBorder(),
-                                                backgroundColor:
-                                                    Colors.red.shade400),
-                                            child: SizedBox(
-                                              height: 40,
-                                              width: 70,
-                                              child: Center(
-                                                  child: Text(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const StadiumBorder(),
+                                            backgroundColor:
+                                                Colors.red.shade400,
+                                          ),
+                                          child: SizedBox(
+                                            height: 40,
+                                            width: 70,
+                                            child: Center(
+                                              child: Text(
                                                 "Track",
                                                 style: GoogleFonts.poppins(
-                                                    fontSize: 18),
-                                              )),
-                                            )),
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
                             ],
