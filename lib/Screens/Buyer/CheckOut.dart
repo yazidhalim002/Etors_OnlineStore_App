@@ -4,6 +4,8 @@ import 'package:etors/Classes/Users.dart';
 import 'package:etors/Models/card_alert_dialog.dart';
 import 'package:etors/Screens/Buyer/Explore.dart';
 import 'package:etors/Screens/Buyer/OrderConfirmation.dart';
+import 'package:etors/Screens/Buyer/AddCard.dart';
+import 'package:etors/Screens/Seller/FillProduct.dart';
 import 'package:etors/Service/BottomNavigationBar.dart';
 import 'package:etors/Service/CustomText.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 String? _paymentMethod;
+int id = 1;
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({
@@ -54,11 +57,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       CollectionReference commandesCollection =
           FirebaseFirestore.instance.collection('Commandes');
       commandesCollection.doc(FirebaseAuth.instance.currentUser!.uid).set({
+        'idCommande': id,
         "Address": userAddress,
         "buyerID": FirebaseAuth.instance.currentUser!.uid,
         "products": widget.prodIds,
         "Delivered": false,
       });
+      id++;
     }
   }
 
@@ -130,7 +135,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     context: context,
                     builder: (context) => const CardAlertDialog());
                 clearCart();
-              } else if (_paymentMethod == 'Credit Card') {}
+              } else if (_paymentMethod == 'Credit Card') {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddCard()));
+              }
             },
             child: const Text('Confirm Order'),
           ),

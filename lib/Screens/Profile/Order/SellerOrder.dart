@@ -1,3 +1,4 @@
+import 'package:etors/Classes/Product.dart';
 import 'package:etors/Screens/Seller/Dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 import '../../../Service/CustomText.dart';
+
+var productID = 0;
 
 class SellerOrderScreen extends StatefulWidget {
   final String sellerId;
@@ -28,7 +31,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
       body: ListView.builder(
         itemCount: SellerProdId.length,
         itemBuilder: (context, index) {
-          var productID = SellerProdId[index];
+          productID = SellerProdId[index];
           return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
                 .collection('Commandes')
@@ -50,6 +53,8 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                 if (documents.isNotEmpty) {
                   final commandData = documents[0].data();
                   final addressInfo = commandData['Address'];
+                  final idCommande = commandData['idCommande'];
+
                   return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                     stream: FirebaseFirestore.instance
                         .collection('Products')
@@ -108,7 +113,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 15,
                                           ),
                                           CustomText(
@@ -116,7 +121,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                                             fontWeight: FontWeight.w500,
                                             fontSize: 17,
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 15,
                                           ),
                                           CustomText(
@@ -124,7 +129,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                                             maxLine: 1,
                                             color: Colors.grey.shade600,
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 20,
                                           ),
                                           Row(
@@ -141,7 +146,9 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  Delivery()));
+                                                                  Delivery(
+                                                                      idCommande,
+                                                                      productID)));
                                                     },
                                                     style: ElevatedButton.styleFrom(
                                                         shape:
@@ -205,15 +212,14 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                         }
                       }
 
-                      return ListTile(
+                      return const ListTile(
                         title: Text('Product not found'),
                       );
                     },
                   );
                 }
               }
-
-              return SizedBox();
+              return const SizedBox();
             },
           );
         },
@@ -226,7 +232,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             LineAwesomeIcons.angle_left,
             color: Colors.black,
           ),
@@ -318,7 +324,8 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
     });
   }
 
-  Widget Delivery() {
+  Widget Delivery(int idCommande, var productID) {
+    print(idCommande);
     return Scaffold(
         appBar: AppBar(
           title: Text('Delivery'),
@@ -399,7 +406,11 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                               await FirebaseFirestore.instance
                                   .collection('users')
                                   .doc(userData['uid'])
-                                  .update({'available': false});
+                                  .update({
+                                'available': false,
+                                'idCommande': idCommande,
+                                'productID': productID
+                              });
                             });
                           },
                         ),

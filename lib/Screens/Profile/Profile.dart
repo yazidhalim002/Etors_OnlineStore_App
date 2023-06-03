@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:etors/Screens/Buyer/OrderConfirmation.dart';
-import 'package:etors/Screens/Profile/BillingDetails/BillingDetails.dart';
+import 'package:etors/Screens/Profile/BillingDetails/ContactUs.dart';
 import 'package:etors/Screens/Profile/DeliveryAdresse/DeliveryAdress.dart';
 import 'package:etors/Screens/Profile/DeliveryAdresse/UrAddress.dart';
 import 'package:etors/Screens/Profile/EditProfile.dart';
@@ -206,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => BillingDetails(),
+                                builder: (context) => ContactusScreen(),
                               ));
                         },
                         endIcon: false),
